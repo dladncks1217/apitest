@@ -10,7 +10,8 @@ const swaggerOptions = require("./swagger");
 
 require("dotenv").config();
 
-const indexRouter = require("./routes/index");
+const authRouter = require("./routes/auth");
+const todoRouter = require("./routes/todo");
 const { sequelize } = require("./models");
 const passportConfig = require("./passport");
 
@@ -39,7 +40,8 @@ app.use(passport.session());
 
 const specs = swaggerJsdoc(swaggerOptions);
 
-app.use("/", indexRouter);
+app.use("/auth", authRouter);
+app.use("/todo", todoRouter);
 app.use("/api", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use((req, res, next) => {

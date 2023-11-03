@@ -9,11 +9,11 @@ require("dotenv").config();
 /**
  * @swagger
  * paths:
- *  /join:
+ *  /auth/join:
  *    post:
  *      summary: 회원가입
  *      tags:
- *        - Auth
+ *        - User
  *      requestBody:
  *        content:
  *          form-data:
@@ -49,6 +49,16 @@ require("dotenv").config();
  *                  nick:
  *                    type: string
  *                    example: 슬링키
+ *        '409':
+ *          description: 이미 가입된 이메일
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    example: 이미 가입된 이메일입니다.
  */
 
 router.post("/join", isNotLoggedIn, async (req, res, next) => {
@@ -57,10 +67,10 @@ router.post("/join", isNotLoggedIn, async (req, res, next) => {
     const exUser = await User.findOne({ where: { email } });
 
     if (exUser) {
-      return res.status(403).json("이미 가입된 이메일입니다.");
+      return res.status(409).json("이미 가입된 이메일입니다.");
     } else {
       const hashedpassword = await bcrypt.hash(password, 12);
-      const newUser = await User.create({
+      await User.create({
         email,
         name,
         password: hashedpassword,
@@ -82,11 +92,11 @@ router.post("/join", isNotLoggedIn, async (req, res, next) => {
 /**
  * @swagger
  * paths:
- *  /login:
+ *  /auth/login:
  *    post:
  *      summary: 로그인
  *      tags:
- *        - Auth
+ *        - User
  *      requestBody:
  *        content:
  *          form-data:
@@ -110,7 +120,7 @@ router.post("/join", isNotLoggedIn, async (req, res, next) => {
  *                  message:
  *                    type: string
  *                    example: 로그인 성공
- *        '403':
+ *        '401':
  *          description: 아이디 또는 비밀번호가 틀립니다.
  *          content:
  *            application/json:
@@ -123,13 +133,12 @@ router.post("/join", isNotLoggedIn, async (req, res, next) => {
  */
 
 router.post("/login", isNotLoggedIn, (req, res, next) => {
-  passport.authenticate("local", (authError, user, info) => {
+  passport.authenticate("local", (authError, user) => {
     if (authError) {
-      console.error(authError);
       return next(authError);
     }
     if (!user) {
-      return res.status(403).json("아이디 또는 비밀번호가 틀립니다.");
+      return res.status(401).json("아이디 또는 비밀번호가 틀립니다.");
     }
     return req.login(user, (loginError) => {
       if (loginError) {
@@ -145,20 +154,80 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
 /**
  * @swagger
  * paths:
+ *  /auth/me:
+ *    get:
+ *      summary: 내 정보 조회
+ *      tags:
+ *        - User
+ *      security:
+ *        - bearerAuth: []
+ *      responses:
+ *        '200':
+ *          description: 내 정보 조회 성공
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  name:
+ *                    type: string
+ *                    example: 임우찬
+ *                  email:
+ *                    type: string
+ *                    example: dlaxodud1217@gmail.com
+ *                  nick:
+ *                    type: string
+ *                    example: 슬링키
+ *        '401':
+ *          description: 인증되지 않음
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    example: 로그인 필요
+ */
+
+router.get("/me", isLoggedIn, async (req, res, next) => {
+  try {
+    const UserData = await User.findOne({ where: { id: req.user.id } });
+
+    const responseData = {
+      name: UserData.name,
+      email: UserData.email,
+      nick: UserData.nick,
+    };
+
+    res.status(200).json(responseData);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+/**
+ * @swagger
+ * paths:
  *  /auth/logout:
  *    delete:
  *      summary: 로그아웃
  *      tags:
- *        - Auth
+ *        - User
  *      responses:
  *        '204':
  *          description: 로그아웃 성공
  */
 
-router.delete("/logout", isLoggedIn, (req, res) => {
-  req.logout();
-  req.session.destroy();
-  res.status(204).end();
+router.delete("/logout", isLoggedIn, (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    req.session.destroy((err) => {
+      if (err) return next(err);
+      res.status(204).end();
+    });
+  });
 });
 
 module.exports = router;
