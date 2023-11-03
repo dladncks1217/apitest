@@ -4,12 +4,7 @@ const options = {
     info: {
       title: "라이브코딩 연습용 투두리스트 API",
       version: "0.1.0",
-      description:
-        "This is a simple CRUD API application made with Express and documented with Swagger",
-      license: {
-        name: "MIT",
-        url: "https://spdx.org/licenses/MIT.html",
-      },
+      description: "안녕하세요?",
       contact: {
         name: "dladncks1217",
         url: "https://github.com/dladncks1217",
@@ -18,7 +13,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:8080",
+        url: "http://slinky.kro.kr",
       },
     ],
   },
