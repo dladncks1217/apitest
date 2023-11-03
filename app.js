@@ -6,6 +6,7 @@ const session = require("express-session");
 const passport = require("passport");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const cors = require("cors");
 const swaggerOptions = require("./swagger");
 
 require("dotenv").config();
@@ -20,6 +21,7 @@ sequelize.sync();
 passportConfig(passport);
 
 app.use(morgan("dev"));
+app.use(cors({ origin: "*" }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
