@@ -44,7 +44,7 @@ const specs = swaggerJsdoc(swaggerOptions);
 
 app.use("/auth", authRouter);
 app.use("/todo", todoRouter);
-app.use("/api", swaggerUi.serve, swaggerUi.setup(specs));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use((req, res, next) => {
   const err = new Error("Not Found");

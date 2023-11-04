@@ -35,7 +35,14 @@ const { isLoggedIn } = require("./middlewares");
  *                   createdAt: "2023-11-03T15:21:08.000Z"
  *                   updatedAt: "2023-11-03T15:21:08.000Z"
  *                   userId: 3
+ *         '401':
+ *           description: 인증되지 않은 사용자입니다.
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "로그인 필요"
  */
+
 router.get("/", isLoggedIn, async (req, res, next) => {
   try {
     const TodoLists = await Todo.findAll({ where: { userId: req.user.id } });
@@ -73,6 +80,12 @@ router.get("/", isLoggedIn, async (req, res, next) => {
  *       responses:
  *         '201':
  *           description: 할일이 성공적으로 추가되었을 때의 응답입니다.
+ *         '401':
+ *           description: 인증되지 않은 사용자입니다.
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "로그인 필요"
  */
 
 router.post("/", isLoggedIn, async (req, res, next) => {
@@ -120,6 +133,12 @@ router.post("/", isLoggedIn, async (req, res, next) => {
  *       responses:
  *         '201':
  *           description: 할일 상태가 성공적으로 업데이트되었을 때의 응답입니다.
+ *         '401':
+ *           description: 인증되지 않은 사용자입니다.
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "로그인 필요"
  */
 
 router.patch("/:id", isLoggedIn, async (req, res, next) => {
