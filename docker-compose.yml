@@ -1,0 +1,20 @@
+version: "3"
+services:
+  web:
+    image: nginx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - /home/ubuntu/index:/usr/share/nginx/html
+      - /etc/letsencrypt/live/slinky.kro.kr/fullchain.pem:/etc/nginx/cert/fullchain.pem
+      - /etc/letsencrypt/live/slinky.kro.kr/privkey.pem:/etc/nginx/cert/privkey.pem
+  certbot:
+    image: certbot/certbot
+    command: certonly --webroot -w /usr/share/nginx/html -d slinky.kro.kr
+    volumes:
+      - /home/ubuntu/index:/usr/share/nginx/html
+    depends_on:
+      - web
