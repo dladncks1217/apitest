@@ -4,7 +4,8 @@ const options = {
     info: {
       title: "라이브코딩 연습용 투두리스트 API",
       version: "0.1.0",
-      description: "안녕하세요?",
+      description:
+        "서브도메인만 와일드카드로 CORS 풀어놓는건 불가능해서 localhost3000만 풀어놨습니다... 코더패드에서 쓸거면 DM주세요",
       contact: {
         name: "dladncks1217",
         url: "https://github.com/dladncks1217",

@@ -120,6 +120,11 @@ router.post("/join", isNotLoggedIn, async (req, res, next) => {
  *                  message:
  *                    type: string
  *                    example: 로그인 성공
+ *          headers:
+ *            Set-Cookie:
+ *              schema:
+ *                type: string
+ *                example: "connect.sid=s%3AtGk5Am_rjtU8HLaAsBT_C0B0o5nwkJBo.xLU4cVy6VTAtXVgbMn%2BVbDRrVqxHk5k7sYn%2FrrbMYSY; Path=/; HttpOnly"
  *        '401':
  *          description: 아이디 또는 비밀번호가 틀립니다.
  *          content:
