@@ -33,8 +33,10 @@ app.use(
     secret: process.env.COOKIE_SECRET,
     cookie: {
       httpOnly: true,
-      secure: false,
+      secure: true,
+      sameSite: "None",
     },
+    proxy: true,
   })
 );
 app.use(passport.initialize());
