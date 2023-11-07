@@ -188,12 +188,13 @@ router.delete("/:id", isLoggedIn, async (req, res, next) => {
   const { id } = req.params;
   const userId = req.user.id;
   try {
-    const todoData = Todo.findOne({
+    const todoData = await Todo.findOne({
       where: {
         id,
         userId,
       },
     });
+
     if (!todoData) return res.status(404).json("존재하지 않는 데이터입니다.");
 
     await Todo.destroy({
