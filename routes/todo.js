@@ -160,4 +160,54 @@ router.patch("/:id", isLoggedIn, async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * paths:
+ *  /todo/{id}:
+ *    delete:
+ *      summary: 할일 삭제
+ *      tags:
+ *        - Todo
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          description: 삭제할 할일의 ID
+ *          schema:
+ *            type: integer
+ *      responses:
+ *        '204':
+ *          description: 할일이 성공적으로 삭제
+ *        '401':
+ *          description: 로그인이 필요한 경우
+ *        '404':
+ *          description: 삭제하려는 할일이 존재하지 않을 때
+ */
+
+router.delete("/:id", isLoggedIn, async (req, res, next) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+  try {
+    const todoData = Todo.findOne({
+      where: {
+        id,
+        userId,
+      },
+    });
+    if (!todoData) return res.status(404).json("존재하지 않는 데이터입니다.");
+
+    await Todo.destroy({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    return res.status(204).end();
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 module.exports = router;
