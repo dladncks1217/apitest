@@ -106,7 +106,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
 /**
  * @swagger
  * paths:
- *   /todos/{id}:
+ *   /todo/{id}:
  *     patch:
  *       summary: 할일 상태 수정
  *       tags:
@@ -152,6 +152,63 @@ router.patch("/:id", isLoggedIn, async (req, res, next) => {
     }
 
     await todo.update({ isChecked });
+
+    res.status(201).end();
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+/**
+ * @swagger
+ * paths:
+ *   /todo/content/{id}:
+ *     patch:
+ *       summary: 할일 내용 수정
+ *       tags:
+ *         - Todo
+ *       security:
+ *         - bearerAuth: []
+ *       parameters:
+ *         - in: path
+ *           name: id
+ *           required: true
+ *           description: 수정할 할일의 ID
+ *           schema:
+ *             type: integer
+ *         - in: body
+ *           name: body
+ *           required: true
+ *           description: 수정할 내용
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 example: "새로운 내용"
+ *       responses:
+ *         '201':
+ *           description: 할일 내용이 성공적으로 업데이트되었을 때의 응답입니다.
+ *         '401':
+ *           description: 인증되지 않은 사용자입니다.
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "로그인 필요"
+ */
+
+router.patch("/content/:id", isLoggedIn, async (req, res, next) => {
+  const { id } = req.params;
+  const { content } = req.body;
+  try {
+    const todo = await Todo.findByPk(id);
+
+    if (!todo) {
+      return res.status(404).json({ error: "조회 일정이 없습니다." });
+    }
+
+    await todo.update({ content });
 
     res.status(201).end();
   } catch (error) {

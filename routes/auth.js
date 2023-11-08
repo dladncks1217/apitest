@@ -143,7 +143,9 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
       return next(authError);
     }
     if (!user) {
-      return res.status(401).json("아이디 또는 비밀번호가 틀립니다.");
+      return res
+        .status(401)
+        .json({ message: "아이디 또는 비밀번호가 틀립니다." });
     }
     return req.login(user, (loginError) => {
       if (loginError) {
@@ -151,7 +153,7 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
         return next(loginError);
       }
 
-      return res.status(200).json("로그인 성공");
+      return res.status(200).json({ message: "로그인 성공" });
     });
   })(req, res, next);
 });
